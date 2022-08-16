@@ -12,7 +12,7 @@
 ! You should have received a copy of the GNU General Public License along with FLEXI. If not, see <http://www.gnu.org/licenses/>.
 !=================================================================================================================================
 #include "flexi.h"
-#if EQNSYSNR == 2 /* NAVIER-STOKES */
+#if EQNSYSNR == 2 || EQNSYSNR == 3 /* NAVIER-STOKES */
 #include "eos.h"
 #endif
 
@@ -286,7 +286,7 @@ FUNCTION IndPersson(U) RESULT(IndValue)
 USE MOD_PreProc
 USE MOD_Indicator_Vars,ONLY:nModes,IndVar
 USE MOD_Interpolation_Vars, ONLY:sVdm_Leg
-#if EQNSYSNR == 2 /* NAVIER-STOKES */
+#if EQNSYSNR == 2 || EQNSYSNR == 3 /* NAVIER-STOKES */
 USE MOD_EOS_Vars
 #endif /* NAVIER-STOKES */
 IMPLICIT NONE
@@ -297,7 +297,7 @@ REAL               :: IndValue                                  !< Value of the 
 !----------------------------------------------------------------------------------------------------------------------------------
 ! LOCAL VARIABLES
 INTEGER                              :: iDeg,i,j,k,l
-#if EQNSYSNR == 2 /* NAVIER-STOKES */
+#if EQNSYSNR == 2 || EQNSYSNR == 3 /* NAVIER-STOKES */
 REAL                                 :: UE(1:PP_2Var)
 #endif /* NAVIER-STOKES */
 REAL,DIMENSION(0:PP_N,0:PP_N,0:PP_NZ) :: U_loc
@@ -308,8 +308,8 @@ REAL,DIMENSION(0:PP_N,0:PP_N,0:PP_NZ) :: U_Modal
 SELECT CASE (IndVar)
 CASE(1:PP_nVar)
   U_loc = U(IndVar,:,:,:)
-#if EQNSYSNR == 2 /* NAVIER-STOKES */
-CASE(6)
+#if EQNSYSNR == 2 || EQNSYSNR == 3 /* NAVIER-STOKES */
+CASE(4+EQNSYSNR) ! Pressure as indicator variable: 6 for NS and 7 for RANS-SA
   DO k=0,PP_NZ; DO j=0,PP_N; DO i=0,PP_N
     UE(EXT_CONS)=U(:,i,j,k)
     UE(EXT_SRHO)=1./UE(EXT_DENS)
