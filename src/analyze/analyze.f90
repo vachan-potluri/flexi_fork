@@ -305,6 +305,9 @@ REAL                            :: L_Inf_Error(PP_nVar),L_2_Error(PP_nVar)
 CalcTime=FLEXITIME()
 RunTime=CalcTime-StartTime
 SWRITE(UNIT_stdOut,'(A14,ES16.7)')' Sim time   : ',Time
+#if LOCAL_STEPPING
+SWRITE(UNIT_stdOut,*) 'Using local time stepping!'
+#endif
 
 ! Calculate error norms
 IF(doCalcErrorNorms)THEN

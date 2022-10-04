@@ -57,7 +57,6 @@ USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage &
 #if LOCAL_STEPPING
                              ,dtElem
 USE MOD_Mesh_Vars     ,ONLY: nElems
-USE MOD_Globals
 #endif
 #if FV_ENABLED
 USE MOD_FV            ,ONLY: FV_Switch
@@ -84,10 +83,6 @@ INTEGER  :: iStage &
             ,i,j,k,iElem
 #endif
 !===================================================================================================================================
-
-#if LOCAL_STEPPING
-SWRITE(*,*) 'Using local time stepping.'
-#endif
 
 #if !(LOCAL_STEPPING)
 ! Premultiply with dt
