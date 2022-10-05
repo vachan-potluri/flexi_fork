@@ -53,10 +53,11 @@ USE MOD_Vector
 USE MOD_DG            ,ONLY: DGTimeDerivative_weakForm
 USE MOD_DG_Vars       ,ONLY: U,Ut,nTotalU
 USE MOD_PruettDamping ,ONLY: TempFilterTimeDeriv
-USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage &
 #if LOCAL_STEPPING
-                             ,dtElem,tLocalStart
+USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage,dtElem,tLocalStart
 USE MOD_Mesh_Vars     ,ONLY: nElems
+#else
+USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage
 #endif
 #if FV_ENABLED
 USE MOD_FV            ,ONLY: FV_Switch
@@ -76,9 +77,9 @@ REAL,INTENT(INOUT)  :: t                                     !< current simulati
 ! LOCAL VARIABLES
 REAL     :: b_dt(1:nRKStages)
 REAL     :: tStage
-INTEGER  :: iStage &
+INTEGER  :: iStage
 #if LOCAL_STEPPING
-            ,i,j,k,iElem
+INTEGER  :: i,j,k,iElem
 #endif
 !===================================================================================================================================
 

@@ -288,9 +288,10 @@ USE MOD_Benchmarking,       ONLY: Benchmarking
 USE MOD_Mesh_Vars,          ONLY: nGlobalElems
 USE MOD_Output,             ONLY: OutputToFile,PrintStatusLine
 USE MOD_Output_Vars,        ONLY: ProjectName
-USE MOD_TimeDisc_Vars,      ONLY: dt,tStart,tEnd &
 #if LOCAL_STEPPING
-                            ,tLocalStart
+USE MOD_TimeDisc_Vars,      ONLY: dt,tStart,tEnd,tLocalStart
+#else
+USE MOD_TimeDisc_Vars,      ONLY: dt,tStart,tEnd
 #endif
 ! IMPLICIT VARIABLE HANDLING
 IMPLICIT NONE

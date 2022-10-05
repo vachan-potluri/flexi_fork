@@ -106,9 +106,10 @@ USE MOD_Predictor           ,ONLY: InitPredictor
 USE MOD_ReadInTools         ,ONLY: GETREAL,GETINT,GETSTR
 USE MOD_StringTools         ,ONLY: LowCase,StripSpaces
 USE MOD_TimeDisc_Vars       ,ONLY: CFLScale
-USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill &
 #if LOCAL_STEPPING
-                            ,tLocalStart
+USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill,tLocalStart
+#else
+USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill
 #endif
 USE MOD_TimeDisc_Vars       ,ONLY: Ut_tmp,UPrev,S2
 USE MOD_TimeDisc_Vars       ,ONLY: maxIter,nCalcTimeStepMax
