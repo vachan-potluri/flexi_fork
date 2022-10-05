@@ -85,6 +85,9 @@ CALL prms%CreateRealOption(  'dtmin',          "Minimal allowed timestep (option
 CALL prms%CreateRealOption(  'dtkill',         "Kill FLEXI if dt gets below this value (optional)","-1.0")
 CALL prms%CreateIntOption(   'maxIter',        "Stop simulation when specified number of timesteps has been performed.", value='-1')
 CALL prms%CreateIntOption(   'NCalcTimeStepMax',"Compute dt at least after every Nth timestep.", value='1')
+#if LOCAL_STEPPING
+CALL prms%CreateRealOption(  'TLocalStart',     "Time at which local stepping has to be started (optional)", "0.0")
+#endif
 END SUBROUTINE DefineParametersTimeDisc
 
 
@@ -103,7 +106,10 @@ USE MOD_Predictor           ,ONLY: InitPredictor
 USE MOD_ReadInTools         ,ONLY: GETREAL,GETINT,GETSTR
 USE MOD_StringTools         ,ONLY: LowCase,StripSpaces
 USE MOD_TimeDisc_Vars       ,ONLY: CFLScale
-USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill
+USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill &
+#if LOCAL_STEPPING
+                            ,tLocalStart
+#endif
 USE MOD_TimeDisc_Vars       ,ONLY: Ut_tmp,UPrev,S2
 USE MOD_TimeDisc_Vars       ,ONLY: maxIter,nCalcTimeStepMax
 USE MOD_TimeDisc_Vars       ,ONLY: SetTimeDiscCoefs,TimeStep,TimeDiscName,TimeDiscType,TimeDiscInitIsDone
@@ -160,6 +166,10 @@ TEnd     = GETREAL('TEnd')
 
 ! Read the end time TEnd from ini file
 TStart   = GETREAL('TStart')
+
+#if LOCAL_STEPPING
+TLocalStart = GETREAL('TLocalStart')
+#endif
 
 ! Read the normalized CFL number
 CFLScale = GETREAL('CFLScale')

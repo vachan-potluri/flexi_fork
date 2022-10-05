@@ -49,6 +49,9 @@ REAL             :: dt_minOld                          !< dt_min in last timeste
 REAL,ALLOCATABLE :: b_dt(:)                            !< timestep of each RK stage
 REAL             :: tStart                             !< Start time of simulation
 REAL             :: tEnd                               !< End time of simulation
+#if LOCAL_STEPPING
+REAL             :: tLocalStart                        !< Time at which local time stepping is activated
+#endif
 REAL             :: tAnalyze                           !< Analyze time intervall
 REAL             :: CFLScale(0:FV_ENABLED)             !< Convective CFL number
 REAL             :: CFLScale_Readin(0:FV_ENABLED)      !< Convective CFL number (value from parameter file)

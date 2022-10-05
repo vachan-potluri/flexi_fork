@@ -55,7 +55,7 @@ USE MOD_DG_Vars       ,ONLY: U,Ut,nTotalU
 USE MOD_PruettDamping ,ONLY: TempFilterTimeDeriv
 USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage &
 #if LOCAL_STEPPING
-                             ,dtElem
+                             ,dtElem,tLocalStart
 USE MOD_Mesh_Vars     ,ONLY: nElems
 #endif
 #if FV_ENABLED
@@ -74,9 +74,7 @@ IMPLICIT NONE
 REAL,INTENT(INOUT)  :: t                                     !< current simulation time
 !-----------------------------------------------------------------------------------------------------------------------------------
 ! LOCAL VARIABLES
-#if !(LOCAL_STEPPING)
 REAL     :: b_dt(1:nRKStages)
-#endif
 REAL     :: tStage
 INTEGER  :: iStage &
 #if LOCAL_STEPPING
@@ -84,10 +82,8 @@ INTEGER  :: iStage &
 #endif
 !===================================================================================================================================
 
-#if !(LOCAL_STEPPING)
 ! Premultiply with dt
 b_dt = RKb*dt
-#endif
 
 DO iStage = 1,nRKStages
   ! NOTE: perform timestep in rk
@@ -105,15 +101,20 @@ DO iStage = 1,nRKStages
     CALL VAXPBY(nTotalU,Ut_tmp,Ut,ConstOut=-RKA(iStage)) !Ut_tmp = Ut - Ut_tmp*RKA (iStage)
   END IF
 #if LOCAL_STEPPING
-  DO iElem=1,nElems
-    DO k=0,PP_NZ
-      DO j=0,PP_N
-        DO i=0,PP_N
-          U(:,i,j,k,iElem) = U(:,i,j,k,iElem) + Ut_tmp(:,i,j,k,iElem)*RKb(iStage)*dtElem(iElem)
-        END DO !k
-      END DO !j
-    END DO !i
-  END DO !iElem
+  ! activate local stepping if simulation time exceeds user given start time for local stepping
+  IF(t.GE.tLocalStart) THEN
+    DO iElem=1,nElems
+      DO k=0,PP_NZ
+        DO j=0,PP_N
+          DO i=0,PP_N
+            U(:,i,j,k,iElem) = U(:,i,j,k,iElem) + Ut_tmp(:,i,j,k,iElem)*RKb(iStage)*dtElem(iElem)
+          END DO !k
+        END DO !j
+      END DO !i
+    END DO !iElem
+  ELSE
+    CALL VAXPBY(nTotalU,U,Ut_tmp,   ConstIn =b_dt(iStage)) !U       = U + Ut_tmp*b_dt(iStage)
+  END IF
 #else
   CALL VAXPBY(nTotalU,U,Ut_tmp,   ConstIn =b_dt(iStage)) !U       = U + Ut_tmp*b_dt(iStage)
 #endif /* LOCAL_STEPPING */

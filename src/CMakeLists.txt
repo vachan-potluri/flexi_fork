@@ -189,7 +189,7 @@ ENDIF()
 # =========================================================================
 # Allow local time stepping
 # =========================================================================
-OPTION(FLEXI_LOCAL_STEPPING "Enable local time stepping for standardrk3-3 and carpenterrk4-5" OFF)
+OPTION(FLEXI_LOCAL_STEPPING "Enable local time stepping for TimeStepByLSERKW2() that covers standardrk3-3 and carpenterrk4-5" OFF)
 IF(FLEXI_LOCAL_STEPPING)
   ADD_DEFINITIONS(-DLOCAL_STEPPING=1)
 ELSE()
