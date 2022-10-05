@@ -288,7 +288,10 @@ USE MOD_Benchmarking,       ONLY: Benchmarking
 USE MOD_Mesh_Vars,          ONLY: nGlobalElems
 USE MOD_Output,             ONLY: OutputToFile,PrintStatusLine
 USE MOD_Output_Vars,        ONLY: ProjectName
-USE MOD_TimeDisc_Vars,      ONLY: dt,tStart,tEnd
+USE MOD_TimeDisc_Vars,      ONLY: dt,tStart,tEnd &
+#if LOCAL_STEPPING
+                            ,tLocalStart
+#endif
 ! IMPLICIT VARIABLE HANDLING
 IMPLICIT NONE
 !----------------------------------------------------------------------------------------------------------------------------------
@@ -306,7 +309,9 @@ CalcTime=FLEXITIME()
 RunTime=CalcTime-StartTime
 SWRITE(UNIT_stdOut,'(A14,ES16.7)')' Sim time   : ',Time
 #if LOCAL_STEPPING
-SWRITE(UNIT_stdOut,*) 'Using local time stepping!'
+IF(TIME.GE.tLocalStart) THEN
+  SWRITE(UNIT_stdOut,*) 'Using local time stepping in TimeStepByLSERKW2()!'
+END IF
 #endif
 
 ! Calculate error norms
