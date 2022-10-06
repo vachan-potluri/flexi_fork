@@ -54,7 +54,7 @@ USE MOD_DG            ,ONLY: DGTimeDerivative_weakForm
 USE MOD_DG_Vars       ,ONLY: U,Ut,nTotalU
 USE MOD_PruettDamping ,ONLY: TempFilterTimeDeriv
 #if LOCAL_STEPPING
-USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage,dtElem,tLocalStart
+USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage,dtElem,tLocalStart,LocalStepCapFactor
 USE MOD_Mesh_Vars     ,ONLY: nElems
 #else
 USE MOD_TimeDisc_Vars ,ONLY: dt,Ut_tmp,RKA,RKb,RKc,nRKStages,CurrentStage
@@ -80,6 +80,7 @@ REAL     :: tStage
 INTEGER  :: iStage
 #if LOCAL_STEPPING
 INTEGER  :: i,j,k,iElem
+REAL     :: LocalStep                                       !< the local time step for current element
 #endif
 !===================================================================================================================================
 
@@ -105,10 +106,11 @@ DO iStage = 1,nRKStages
   ! activate local stepping if simulation time exceeds user given start time for local stepping
   IF(t.GE.tLocalStart) THEN
     DO iElem=1,nElems
+      LocalStep = MIN(dtElem(iElem),dt*LocalStepCapFactor)
       DO k=0,PP_NZ
         DO j=0,PP_N
           DO i=0,PP_N
-            U(:,i,j,k,iElem) = U(:,i,j,k,iElem) + Ut_tmp(:,i,j,k,iElem)*RKb(iStage)*dtElem(iElem)
+            U(:,i,j,k,iElem) = U(:,i,j,k,iElem) + Ut_tmp(:,i,j,k,iElem)*RKb(iStage)*LocalStep
           END DO !k
         END DO !j
       END DO !i

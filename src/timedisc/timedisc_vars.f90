@@ -51,6 +51,7 @@ REAL             :: tStart                             !< Start time of simulati
 REAL             :: tEnd                               !< End time of simulation
 #if LOCAL_STEPPING
 REAL             :: tLocalStart                        !< Time at which local time stepping is activated
+REAL             :: LocalStepCapFactor                 !< The local time step is capped to this factor times the global step
 #endif
 REAL             :: tAnalyze                           !< Analyze time intervall
 REAL             :: CFLScale(0:FV_ENABLED)             !< Convective CFL number

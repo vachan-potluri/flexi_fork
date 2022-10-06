@@ -87,6 +87,7 @@ CALL prms%CreateIntOption(   'maxIter',        "Stop simulation when specified n
 CALL prms%CreateIntOption(   'NCalcTimeStepMax',"Compute dt at least after every Nth timestep.", value='1')
 #if LOCAL_STEPPING
 CALL prms%CreateRealOption(  'TLocalStart',     "Time at which local stepping has to be started (optional)", "0.0")
+CALL prms%CreateRealOption(  'LocalStepCapFactor', "The local time step is capped to this factor times the global step", "100.0")
 #endif
 END SUBROUTINE DefineParametersTimeDisc
 
@@ -107,7 +108,7 @@ USE MOD_ReadInTools         ,ONLY: GETREAL,GETINT,GETSTR
 USE MOD_StringTools         ,ONLY: LowCase,StripSpaces
 USE MOD_TimeDisc_Vars       ,ONLY: CFLScale
 #if LOCAL_STEPPING
-USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill,tLocalStart
+USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill,tLocalStart,LocalStepCapFactor
 #else
 USE MOD_TimeDisc_Vars       ,ONLY: dtElem,dt,tend,tStart,dt_dynmin,dt_kill
 #endif
@@ -170,6 +171,7 @@ TStart   = GETREAL('TStart')
 
 #if LOCAL_STEPPING
 TLocalStart = GETREAL('TLocalStart')
+LocalStepCapFactor = GETREAL('LocalStepCapFactor')
 #endif
 
 ! Read the normalized CFL number
